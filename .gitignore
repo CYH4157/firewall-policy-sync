@@ -1,0 +1,16 @@
+# ── 憑證 / 機密（絕對不要 commit）──
+# 填了真實 project_id / token 的設定檔
+config.yaml
+dist/config.yaml
+*.token
+
+# ── 編譯產物 ──
+*.exe
+*.dll
+
+# ── 發佈打包 ──
+sg_firewall_tool.zip
+*.zip
+
+# ── 其他 ──
+# 若需要保留某個 zip/exe，可用 git add -f 強制加入

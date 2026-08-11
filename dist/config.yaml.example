@@ -1,0 +1,16 @@
+# ─────────────────────────────────────────────────────────────
+#  AI-TRUST 安全群組匯入工具　設定檔範本
+#  第一次使用：把這個檔案「另存新檔」成 config.yaml，再把下面的值填成你自己的。
+# ─────────────────────────────────────────────────────────────
+
+# API 網址（通常不用改）
+base_url: https://api.ai-trust.iic.nchc.org.tw
+
+# 專案 ID：登入雲平台後，看瀏覽器網址列 /project/<這一段> 就是
+project_id: "請填入你的 project-id"
+
+# 存取權杖 Bearer Token：從雲平台取得。⚠ Token 會過期，過期就換一組新的。
+token: "請填入你的 token"
+
+# 要匯入的 Excel 檔名（放在跟這個 exe 同一個資料夾）
+excel: planweb_policy.xlsx

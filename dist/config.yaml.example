@@ -7,10 +7,10 @@
 base_url: https://api.ai-trust.iic.nchc.org.tw
 
 # 專案 ID：登入雲平台後，看瀏覽器網址列 /project/<這一段> 就是
-project_id: "請填入你的 project-id"
+project_id: "f070e060-4e99-44a4-84f5-ff16dba1d9e6"
 
 # 存取權杖 Bearer Token：從雲平台取得。⚠ Token 會過期，過期就換一組新的。
-token: "請填入你的 token"
+token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpYW0gdXNlciBhY2Nlc3MgdG9rZW4iLCJhdWQiOlsiNGRjZWZkMmMtMTAwYi00ZDcwLWFjZTUtNjlhMDlkOTgzMTUyIl0sImV4cCI6MTc4Nzk3NDkyNiwibmJmIjoxNzg3ODg4NTI2LCJpYXQiOjE3ODc4ODg1MjZ9.TFSUGaqdhF_XG7A1429dy3oDAqRbyygFAG_uHB2fCeU"
 
 # 要匯入的 Excel 檔名（放在跟這個 exe 同一個資料夾）
 excel: planweb_policy.xlsx

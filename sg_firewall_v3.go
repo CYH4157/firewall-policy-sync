@@ -149,9 +149,10 @@ type Rule struct {
 }
 
 type SecGroup struct {
-	Name        string
-	Description string
-	Rules       []Rule
+	Name          string
+	Description   string
+	Rules         []Rule
+	hasCustomDesc bool // 群組描述是否已經套用過 excel「描述」欄的內容 (套用過就不再被預設模板蓋掉)
 }
 
 var portServiceRe = regexp.MustCompile(`(?i)^(.*?)\s*port\s*:\s*(\d+)\s*$`)
@@ -213,9 +214,10 @@ func buildPortSpec(portMin, portMax int) string {
 }
 
 // parsePortService 解析 Excel 的 Port/Service 欄, 回傳:
-//   portMin/portMax : 數值範圍 (單一 port 時兩者相同), 用來算穩定 key
-//   portSpec        : 送給 ai-trust API `port` 欄位的字串 ("443" 或 "443:478")
-//   label           : 易讀服務名 (查得到才有, 否則為空)
+//
+//	portMin/portMax : 數值範圍 (單一 port 時兩者相同), 用來算穩定 key
+//	portSpec        : 送給 ai-trust API `port` 欄位的字串 ("443" 或 "443:478")
+//	label           : 易讀服務名 (查得到才有, 否則為空)
 func parsePortService(s string) (protocol string, portMin, portMax int, portSpec, label string, err error) {
 	s = strings.TrimSpace(s)
 	if s == "" {
@@ -321,6 +323,7 @@ func loadSecGroupsFromExcel(path string) ([]SecGroup, error) {
 			return nil, fmt.Errorf("Excel 缺少欄位: %q, 目前欄位: %v", r, header)
 		}
 	}
+	_, hasDescCol := col["描述"]
 
 	get := func(row []string, key string) string {
 		idx := col[key]
@@ -369,18 +372,28 @@ func loadSecGroupsFromExcel(path string) ([]SecGroup, error) {
 			remoteCIDR = dst
 		}
 
+		// 描述欄優先: excel 裡「描述」欄若有填內容, 就用那個當說明文字 (規則跟群組都套用);
+		// 沒有這欄或該列留空, 才退回原本自動組出的預設文字。
+		excelDesc := ""
+		if hasDescCol {
+			excelDesc = strings.TrimSpace(get(row, "描述"))
+		}
+		note := excelDesc
+		if note == "" {
+			note = fmt.Sprintf("%s (from %s, row %d)", label, fileName, excelRowNo)
+		}
+
 		key := ruleKey(direction, protocol, portMin, portMax, remoteCIDR)
 		rule := Rule{
-			Key:        key,
-			Label:      fmt.Sprintf("%s-%s-%s", ruleName, label, portSpec),
-			Direction:  direction,
-			Protocol:   protocol,
-			PortMin:    portMin,
-			PortMax:    portMax,
-			PortSpec:   portSpec,
-			RemoteCIDR: remoteCIDR,
-			Description: fmt.Sprintf("%s%s] %s (from %s, row %d)",
-				managedMarkerPrefix, key, label, fileName, excelRowNo),
+			Key:         key,
+			Label:       fmt.Sprintf("%s-%s-%s", ruleName, label, portSpec),
+			Direction:   direction,
+			Protocol:    protocol,
+			PortMin:     portMin,
+			PortMax:     portMax,
+			PortSpec:    portSpec,
+			RemoteCIDR:  remoteCIDR,
+			Description: fmt.Sprintf("%s%s] %s", managedMarkerPrefix, key, note),
 		}
 
 		g, ok := groups[ruleName]
@@ -389,6 +402,12 @@ func loadSecGroupsFromExcel(path string) ([]SecGroup, error) {
 				"[xlsx-managed] Created via API from %s, group=%s", fileName, ruleName)}
 			groups[ruleName] = g
 			order = append(order, ruleName)
+		}
+		// 群組描述也套用 excel「描述」欄: 用同一個 Rule Name 底下第一個有填「描述」的列。
+		// 只套用一次 (hasCustomDesc), 避免後面列的空值或不同值又蓋掉已經套用的內容。
+		if excelDesc != "" && !g.hasCustomDesc {
+			g.Description = fmt.Sprintf("[xlsx-managed] %s", excelDesc)
+			g.hasCustomDesc = true
 		}
 		g.Rules = append(g.Rules, rule)
 	}

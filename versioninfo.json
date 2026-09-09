@@ -1,0 +1,27 @@
+{
+  "FixedFileInfo": {
+    "FileVersion": {"Major": 1, "Minor": 0, "Patch": 0, "Build": 0},
+    "ProductVersion": {"Major": 1, "Minor": 0, "Patch": 0, "Build": 0},
+    "FileFlagsMask": "3f",
+    "FileFlags ": "00",
+    "FileOS": "40004",
+    "FileType": "01",
+    "FileSubType": "00"
+  },
+  "StringFileInfo": {
+    "CompanyName": "NCHC-2203003",
+    "FileDescription": "SG Firewall Policy Sync Tool - 內部防火牆政策匯入工具",
+    "FileVersion": "1.0.0.0",
+    "InternalName": "sg_firewall.exe",
+    "LegalCopyright": "© 2026 NCHC",
+    "OriginalFilename": "sg_firewall.exe",
+    "ProductName": "SG Firewall Policy Sync",
+    "ProductVersion": "1.0.0.0"
+  },
+  "VarFileInfo": {
+    "Translation": {
+      "LangID": "0409",
+      "CharsetID": "04B0"
+    }
+  }
+}
